@@ -1,0 +1,35 @@
+--- src/org/apache/stylebook/printers/ImagePrinter.java	1999-11-30 07:28:54.000000000 -0500
++++ src/org/apache/stylebook/printers/ImagePrinter.java	2009-01-07 17:00:13.802150149 -0500
+@@ -8,7 +8,10 @@
+ package org.apache.stylebook.printers;
+ 
+ import org.apache.stylebook.*;
+-import com.sun.image.codec.jpeg.*;
++import javax.imageio.*;
++import javax.imageio.plugins.jpeg.*;
++import javax.imageio.metadata.*;
++import javax.imageio.stream.*;
+ import java.io.IOException;
+ import java.io.OutputStream;
+ import java.io.PrintStream;
+@@ -144,11 +147,15 @@
+             }
+         }
+ 
+-        // Write out image (highest quality for jpeg data)
+-        JPEGEncodeParam jpar=JPEGCodec.getDefaultJPEGEncodeParam(img);
+-        jpar.setQuality(1,true);
+-        JPEGImageEncoder jenc=JPEGCodec.createJPEGEncoder(out,jpar);
+-        jenc.encode(img);
++        ImageWriter encoder = (ImageWriter)ImageIO.getImageWritersByFormatName("JPEG").next();
++        JPEGImageWriteParam param = new JPEGImageWriteParam(null);
++
++        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
++        param.setCompressionQuality(1);
++
++        encoder.setOutput(ImageIO.createImageOutputStream(out));
++        encoder.write((IIOMetadata) null, new IIOImage(img,null,null), param);
++
+         out.flush();
+     }
+ 

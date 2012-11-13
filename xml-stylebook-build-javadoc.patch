@@ -1,0 +1,66 @@
+--- build.xml.orig	2004-12-14 15:54:50.000000000 +0000
++++ build.xml	2010-06-12 19:50:39.976589551 +0100
+@@ -54,17 +54,16 @@
+ 	  <property name="build.dir" value="./build"/>
+ 	  <property name="build.src" value="${build.dir}/src"/>
+ 	  <property name="build.dest" value="${build.dir}/classes"/>
++	  <property name="build.javadoc" value="${build.dir}/javadoc"/>
+ 	  <property name="src.dir" value="./src"/>
+ 	  <property name="bin.dir" value="./bin"/>
+-      <condition property="sun.codec.present" >
+-        <available classname="com.sun.image.codec.jpeg.JPEGCodec"/>
+-      </condition>
+   </target>
+ 
+   <target name="prepare" depends="init">
+     <mkdir dir="${build.dir}"/>
+     <mkdir dir="${build.src}"/>
+     <mkdir dir="${build.dest}"/>
++    <mkdir dir="${build.javadoc}"/>
+     <copy todir="${build.src}">
+       <fileset dir="${src.dir}"/>
+     </copy>
+@@ -86,15 +85,14 @@
+   
+ <!--Compile and Package to work with Xalan-J 2 -->
+   <target name="compile2" depends="prepare">
+-    <javac srcdir="${src.dir}" excludes="org/apache/stylebook/processors/XalanProcessor.java" destdir="${build.dest}" debug="${debug}">
++    <javac srcdir="${src.dir}" excludes="org/apache/stylebook/processors/XalanProcessor.java" destdir="${build.dest}" debug="${debug}" target="1.5" source="1.5">
+         <exclude name="**/org/apache/stylebook/processors/XalanProcessor.java"/>
+-        <exclude name="**/org/apache/stylebook/printers/ImagePrinter.java" unless="sun.codec.present"/>
+     </javac>
+     <copy todir="${build.dest}/org/apache/stylebook/data">
+       <fileset dir="${build.src}/org/apache/stylebook/data"/>
+     </copy>
+   </target>
+-  <target name="package2" depends="compile2">
++  <target name="package2" depends="compile2,javadoc">
+     <replace file="${build.dest}/org/apache/stylebook/data/engine.xml" token="XalanProcessor" value="Xalan2Processor"/>
+     <jar jarfile="${bin.dir}/${name}-${version-xalan-2}.jar" basedir="${build.dest}" includes="org/**"/>
+   </target>
+@@ -103,4 +101,25 @@
+     <deltree dir="${build.dir}"/>
+   </target>
+ 
++  <target name="javadoc" depends="prepare">
++    <javadoc destdir="${build.javadoc}"
++             packagenames="*"
++             noindex="false"
++             splitindex="true"
++             use="true"
++             version="true"
++             author="true"
++             windowtitle="${name} ${version-xalan-2}"
++             doctitle="${name} ${version-xalan-2} JavaDoc">
++      <fileset dir="${build.src}">
++        <exclude name="**/XalanProcessor.java"/>
++        <exclude name="**/stylebook/data/*"/>
++      </fileset>
++      <classpath>
++        <pathelement path="${bin.dir}"/>
++      </classpath>
++      <link href="/usr/share/javadoc/java" offline="true" packagelistLoc="/usr/share/javadoc/java"/>
++    </javadoc>
++  </target>
++
+ </project>
