@@ -26,7 +26,11 @@ BuildRequires: jpackage-utils
 BuildRequires: ant
 BuildRequires: xml-commons-apis
 BuildRequires: xerces-j2
+%if 0%{?fedora}
+BuildRequires: dejavu-sans-fonts
+%else
 BuildRequires: fonts-ttf-dejavu
+%endif
 Requires:      java
 Requires:      jpackage-utils
 Requires:      xml-commons-apis
