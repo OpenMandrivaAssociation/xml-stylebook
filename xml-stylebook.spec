@@ -29,6 +29,7 @@ BuildRequires: xerces-j2
 %if 0%{?fedora}
 BuildRequires: dejavu-sans-fonts
 %else
+BuildRequires: fontconfig
 BuildRequires: fonts-ttf-dejavu
 %endif
 Requires:      java
