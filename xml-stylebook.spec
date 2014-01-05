@@ -1,8 +1,9 @@
+%{?_javapackages_macros:%_javapackages_macros}
 Name:          xml-stylebook
 Version:       1.0
-Release:       0.8.b3_xalan2.svn313293
+Release:       0.14.b3_xalan2.svn313293.0%{?dist}
 Summary:       Apache XML Stylebook
-Group:         Development/Java
+
 License:       ASL 1.1
 URL:           http://xml.apache.org/
 
@@ -17,27 +18,26 @@ Patch0:        %{name}-image-printer.patch
 # Patch the build script to build javadocs
 Patch1:        %{name}-build-javadoc.patch
 
-BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:     noarch
 
-BuildRequires: java-devel >= 0:1.6.0
+BuildRequires: java-devel >= 1:1.6.0
 BuildRequires: java-javadoc
 BuildRequires: jpackage-utils
 BuildRequires: ant
 BuildRequires: xml-commons-apis
-BuildRequires: jaxp_parser_impl
+BuildRequires: xerces-j2
 BuildRequires: fonts-ttf-dejavu
 Requires:      java
 Requires:      jpackage-utils
 Requires:      xml-commons-apis
-Requires:      jaxp_parser_impl
+Requires:      xerces-j2
 
 %description
 Apache XML Stylebook is a HTML documentation generator.
 
 %package       javadoc
 Summary:       API documentation for %{name}
-Group:         Development/Java
+
 Requires:      java-javadoc
 
 %description   javadoc
@@ -45,7 +45,7 @@ Requires:      java-javadoc
 
 %package       demo
 Summary:       Examples for %{name}
-Group:         Development/Java
+
 Requires:      %{name} = %{version}-%{release}
 
 %description   demo
@@ -85,18 +85,13 @@ java -classpath "$(build-classpath xml-commons-apis):$(build-classpath jaxp_pars
 popd
 
 %install
-rm -rf %{buildroot}
-
 # jars
 install -pD -T bin/stylebook-%{version}-b3_xalan-2.jar \
-  %{buildroot}%{_javadir}/%{name}-%{version}.jar
-(cd %{buildroot}%{_javadir} && for jar in *-%{version}.jar; do \
-  ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
+  %{buildroot}%{_javadir}/%{name}.jar
 
 # javadoc
-install -d %{buildroot}%{_javadocdir}/%{name}-%{version}
-cp -pr build/javadoc/* %{buildroot}%{_javadocdir}/%{name}-%{version}
-(cd %{buildroot}%{_javadocdir} && ln -sf %{name}-%{version} %{name}) 
+install -d %{buildroot}%{_javadocdir}/%{name}
+cp -pr build/javadoc/* %{buildroot}%{_javadocdir}/%{name}
 
 # examples
 install -d %{buildroot}%{_datadir}/%{name}
@@ -104,20 +99,61 @@ cp -pr docs %{buildroot}%{_datadir}/%{name}
 cp -pr styles %{buildroot}%{_datadir}/%{name}
 cp -pr results %{buildroot}%{_datadir}/%{name}
 
-%clean
-rm -rf %{buildroot}
-
 %files
-%defattr(-,root,root,-)
 %doc LICENSE.txt
 %{_javadir}/*
 
 %files javadoc
-%defattr(-,root,root,-)
-%{_javadocdir}/%{name}-%{version}
+%doc LICENSE.txt
 %{_javadocdir}/%{name}
 
 %files demo
-%defattr(-,root,root,-)
 %{_datadir}/%{name} 
+
+%changelog
+* Mon Aug 12 2013 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.14.b3_xalan2.svn313293
+- Prefer xerces-j2 instead of gcj for providing jaxp_parser_impl
+
+* Sat Aug 10 2013 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.13.b3_xalan2.svn313293
+- Update for newer guidelines
+
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0-0.12.b3_xalan2.svn313293
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
+
+* Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0-0.11.b3_xalan2.svn313293
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0-0.10.b3_xalan2.svn313293
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0-0.9.b3_xalan2.svn313293
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0-0.8.b3_xalan2.svn313293
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Sun Dec 12 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.7.b3_xalan2.svn313293
+- Really fix FTBFS this time.
+
+* Sun Dec 12 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.6.b3_xalan2.svn313293
+- Fix FTBFS due to ant upgrade.
+
+* Sat Jun 12 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.5.b3_xalan2.svn313293
+- Link to local java API docs properly and fix requires on javadoc package.
+- Build with source and target levels of 1.5 so we don't have to require 1.6.
+
+* Thu Apr 22 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.4.b3_xalan2.svn313293
+- Remove font from demo package to comply with guidelines. RHBZ #567912
+
+* Mon Jan 11 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.3.b3_xalan2.svn313293
+- Build the examples (this serves as a good test suite.)
+- Patch the build script to build javadocs.
+- Add a build dep on a font package because the JDK is missing a dependency
+  to function correctly in headless mode. See RHBZ #478480 and #521523.
+
+* Tue Jan 5 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.2.b3_xalan2.svn313293
+- Add patch from JPackage to fix NPE in Xalan-J2 doc generation.
+
+* Tue Jan 5 2010 Mat Booth <fedora@matbooth.co.uk> - 1.0-0.1.b3_xalan2.svn313293
+- Initial stab at packaging trunk version of stylebook.
 
