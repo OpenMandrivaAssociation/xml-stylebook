@@ -19,7 +19,7 @@ Patch1:        %{name}-build-javadoc.patch
 
 BuildArch:     noarch
 
-BuildRequires: java-devel >= 1:1.6.0
+BuildRequires: java-devel >= 1.6.0
 BuildRequires: java-javadoc
 BuildRequires: ant
 BuildRequires: xml-commons-apis
