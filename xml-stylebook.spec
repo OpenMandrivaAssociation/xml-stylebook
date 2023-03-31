@@ -1,6 +1,6 @@
 Name:          xml-stylebook
 Version:       1.0
-Release:       0.313293.1
+Release:       0.313293.2
 Summary:       Apache XML Stylebook
 
 License:       ASL 1.1
