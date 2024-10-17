@@ -4,7 +4,7 @@ Release:       0.313293.2
 Summary:       Apache XML Stylebook
 
 License:       ASL 1.1
-URL:           http://xml.apache.org/
+URL:           https://xml.apache.org/
 
 # How to generate this tarball:
 #  $ svn export http://svn.apache.org/repos/asf/xml/stylebook/trunk/@313293 xml-stylebook-1.0
